@@ -3,6 +3,7 @@
 client_id=$1 # Client ID as first argument
 pem=$( cat $2 ) # file path of the private key as second argument
 org=$3
+installation_id=$4 # Installation ID as fourth argument
 
 now=$(date +%s)
 iat=$((${now})) # Issues 60 seconds in the past
@@ -36,7 +37,7 @@ signature=$(
 JWT="${header_payload}"."${signature}"
 
 access_token=$(curl --request POST \
-  --url "https://api.github.com/app/installations/110638335/access_tokens" \
+  --url "https://api.github.com/app/installations/${installation_id}/access_tokens" \
   --header "Accept: application/vnd.github+json" \
   --header "Authorization: Bearer ${JWT}" \
   --header "X-GitHub-Api-Version: 2022-11-28" | jq -r '.token')

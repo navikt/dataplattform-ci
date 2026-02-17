@@ -16,35 +16,45 @@
 
 set -e
 
-GITHUB_ORG="navikt"
-GITHUB_REPO_NAME="union-demo"
-GITHUB_APP_ID="2878174"
+# Configuration via environment variables (with defaults for backward compatibility)
+GITHUB_ORG="${GITHUB_ORG:-navikt}"
+GITHUB_REPO_NAME="${GITHUB_REPO_NAME:-union-demo}"
+GITHUB_APP_ID="${GITHUB_APP_ID:-2878174}"
+GITHUB_APP_INSTALLATION_ID="${GITHUB_APP_INSTALLATION_ID:-110638335}"
 GITHUB_APP_PRIVATE_KEY_PATH="/home/runner/key.pem"
+RUNNER_LABELS="${RUNNER_LABELS:-foo,bar}"
+
+# Validate that the private key exists
+if [ ! -f "${GITHUB_APP_PRIVATE_KEY_PATH}" ]; then
+  echo "ERROR: Private key not found at ${GITHUB_APP_PRIVATE_KEY_PATH}"
+  echo "Mount your key.pem file, e.g.: docker run -v /path/to/key.pem:/home/runner/key.pem ..."
+  exit 1
+fi
 
 # Prepare internal variables.
 GITHUB_REPO_URL=https://github.com/${GITHUB_ORG}/${GITHUB_REPO_NAME}
-GH_TOKEN=$(./create_jwt_token.sh ${GITHUB_APP_ID} ${GITHUB_APP_PRIVATE_KEY_PATH} ${GITHUB_ORG})
+GH_TOKEN=$(./create_jwt_token.sh "${GITHUB_APP_ID}" "${GITHUB_APP_PRIVATE_KEY_PATH}" "${GITHUB_ORG}" "${GITHUB_APP_INSTALLATION_ID}")
 
 echo "token: ${GH_TOKEN}"
 
-RUNNER_PREFIX="cloud-run-worker"
+RUNNER_PREFIX="union-ci-runner"
 RUNNER_SUFFIX=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)
 RUNNER_NAME="${RUNNER_PREFIX}-${RUNNER_SUFFIX}"
 
 echo "Runner:"
-echo $RUNNER_SUFFIX
-echo $RUNNER_NAME
+echo "$RUNNER_SUFFIX"
+echo "$RUNNER_NAME"
 
 # [START cloudrun_github_worker_pool_start]
 # Configure the current runner instance with URL, token and name.
 # mkdir -p /home/runner/actions-runner && cd /home/runner/actions-runner
 echo "GitHub Repo: ${GITHUB_REPO_URL} for ${RUNNER_PREFIX}-${RUNNER_SUFFIX}"
-./config.sh --unattended --url ${GITHUB_REPO_URL} --token ${GH_TOKEN} --name ${RUNNER_NAME} --
+./config.sh --unattended --url https://github.com/"${GITHUB_ORG}" --token "${GH_TOKEN}" --name "${RUNNER_NAME}" --labels "${RUNNER_LABELS}"
 
 # Function to cleanup and remove runner from Github.
 cleanup() {
    echo "Removing runner..."
-   ./config.sh remove --unattended --token ${GH_TOKEN}
+   ./config.sh remove --unattended --token "${GH_TOKEN}"
 }
 
 # Trap signals.
