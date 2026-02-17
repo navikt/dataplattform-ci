@@ -18,11 +18,11 @@ set -e
 
 # Configuration via environment variables (with defaults for backward compatibility)
 GITHUB_ORG="${GITHUB_ORG:-navikt}"
-GITHUB_REPO_NAME="${GITHUB_REPO_NAME:-union-demo}"
 GITHUB_APP_ID="${GITHUB_APP_ID:-2878174}"
 GITHUB_APP_INSTALLATION_ID="${GITHUB_APP_INSTALLATION_ID:-110638335}"
-GITHUB_APP_PRIVATE_KEY_PATH="/home/runner/key.pem"
+GITHUB_APP_PRIVATE_KEY_PATH="${GITHUB_APP_PRIVATE_KEY_PATH}"
 RUNNER_LABELS="${RUNNER_LABELS:-foo,bar}"
+RUNNER_GROUP="${RUNNER_GROUP:-Default}"
 
 # Validate that the private key exists
 if [ ! -f "${GITHUB_APP_PRIVATE_KEY_PATH}" ]; then
@@ -32,7 +32,6 @@ if [ ! -f "${GITHUB_APP_PRIVATE_KEY_PATH}" ]; then
 fi
 
 # Prepare internal variables.
-GITHUB_REPO_URL=https://github.com/${GITHUB_ORG}/${GITHUB_REPO_NAME}
 GH_TOKEN=$(./create_jwt_token.sh "${GITHUB_APP_ID}" "${GITHUB_APP_PRIVATE_KEY_PATH}" "${GITHUB_ORG}" "${GITHUB_APP_INSTALLATION_ID}")
 
 echo "token: ${GH_TOKEN}"
@@ -48,8 +47,7 @@ echo "$RUNNER_NAME"
 # [START cloudrun_github_worker_pool_start]
 # Configure the current runner instance with URL, token and name.
 # mkdir -p /home/runner/actions-runner && cd /home/runner/actions-runner
-echo "GitHub Repo: ${GITHUB_REPO_URL} for ${RUNNER_PREFIX}-${RUNNER_SUFFIX}"
-./config.sh --unattended --url https://github.com/"${GITHUB_ORG}" --token "${GH_TOKEN}" --name "${RUNNER_NAME}" --labels "${RUNNER_LABELS}"
+./config.sh --unattended --url "https://github.com/${GITHUB_ORG}" --token "${GH_TOKEN}" --name "${RUNNER_NAME}" --labels "${RUNNER_LABELS}" --runnergroup "${RUNNER_GROUP}"
 
 # Function to cleanup and remove runner from Github.
 cleanup() {

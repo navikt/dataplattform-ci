@@ -2,10 +2,10 @@ services:
   runner:
     build: .
     volumes:
-      - ${GITHUB_APP_PRIVATE_KEY_FILE:-./key.pem}:/home/runner/key.pem:ro
+      - ${GITHUB_APP_PRIVATE_KEY_FILE:-~/.secrets/key.pem}:/home/runner/key.pem:ro
     environment:
       - GITHUB_ORG=${GITHUB_ORG:-navikt}
-      - GITHUB_REPO_NAME=${GITHUB_REPO_NAME:-union-demo}
       - GITHUB_APP_ID=${GITHUB_APP_ID:-2878174}
       - GITHUB_APP_INSTALLATION_ID=${GITHUB_APP_INSTALLATION_ID:-110638335}
-      - RUNNER_LABELS=${RUNNER_LABELS:-foo,bar}
+      - RUNNER_LABELS=${RUNNER_LABELS:-union-dev}
+      - RUNNER_GROUP=${RUNNER_GROUP:-"Union CI"}
