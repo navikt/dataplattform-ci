@@ -34,7 +34,10 @@ fi
 # Prepare internal variables.
 GH_TOKEN=$(./create_jwt_token.sh "${GITHUB_APP_ID}" "${GITHUB_APP_PRIVATE_KEY_PATH}" "${GITHUB_ORG}" "${GITHUB_APP_INSTALLATION_ID}")
 
-echo "token: ${GH_TOKEN}"
+if [ -z "${GH_TOKEN}" ]; then
+  echo "ERROR: Failed to obtain registration token"
+  exit 1
+fi
 
 RUNNER_PREFIX="union-ci-runner"
 RUNNER_SUFFIX=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)
