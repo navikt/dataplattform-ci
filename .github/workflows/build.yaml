@@ -1,0 +1,35 @@
+name: Build runner image and update cloud run worker pool
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build.yaml'
+      - 'Dockerfile'
+      - 'create_jwt_token.sh'
+      - 'start.sh'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.CI_SERVICE_ACCOUNT_EMAIL }}
+
+      - run: echo "TAG=$(git log -1 --pretty=%ad --date=format:%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+
+      - uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: |
+            europe-west1-docker.pkg.dev/nav-data-management-dev/images/union-ci-runner:${{ env.TAG }}
