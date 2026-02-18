@@ -30,4 +30,4 @@ jobs:
         with:
           push: true
           tags: |
-            europe-west1-docker.pkg.dev/nav-data-management-dev/images/union-ci-runner:${{ env.TAG }}
+            europe-west1-docker.pkg.dev/knada-dev/flyte-images/union-ci-runner:${{ env.TAG }}
