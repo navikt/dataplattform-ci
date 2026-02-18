@@ -10,10 +10,6 @@ on:
       - 'create_jwt_token.sh'
       - 'start.sh'
 
-permissions:
-  contents: read
-  id-token: write
-
 jobs:
   build-push-and-update-runner-image:
     runs-on: ubuntu-latest
@@ -26,7 +22,7 @@ jobs:
         uses: google-github-actions/auth@v3
         with:
           project_id: nav-data-management-dev
-          credentials_json: '${{ secrets.SERVICE_ACCOUNT_CREDS }}'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
       - run: echo "TAG=$(git log -1 --pretty=%ad --date=format:%Y%m%d-%H%M%S)" >> $GITHUB_ENV
 
