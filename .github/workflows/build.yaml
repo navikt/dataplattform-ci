@@ -10,12 +10,13 @@ on:
       - 'create_jwt_token.sh'
       - 'start.sh'
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   build-push-and-update-runner-image:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
