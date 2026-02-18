@@ -10,6 +10,10 @@ on:
       - 'create_jwt_token.sh'
       - 'start.sh'
 
+env:
+  CLOUD_RUN_DEV_PROJECT: nav-data-union-ci-dev
+  CLOUD_RUN_WORKER_POOL_NAME: union-ci-worker-pool
+
 permissions:
   contents: read
   id-token: write
@@ -42,4 +46,11 @@ jobs:
         with:
           push: true
           tags: |
-            europe-west1-docker.pkg.dev/knada-dev/flyte-images/union-ci-runner:${{ env.TAG }}
+            europe-west1-docker.pkg.dev/nav-data-management-dev/images/union-ci-runner:${{ env.TAG }}
+
+      - name: Update cloud run worker pool image
+        run: |
+          gcloud run worker-pools update ${{ env.CLOUD_RUN_WORKER_POOL_NAME }} \
+            --project=${{ env.CLOUD_RUN_DEV_PROJECT }} \
+            --region=europe-west1 \
+            --image=europe-west1-docker.pkg.dev/nav-data-management-dev/images/union-ci-runner:${{ env.TAG }}
