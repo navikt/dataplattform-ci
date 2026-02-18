@@ -21,8 +21,9 @@ jobs:
         name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v3
         with:
-          project_id: nav-data-management-dev
-          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+          token_format: access_token
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.CI_SERVICE_ACCOUNT_EMAIL }}
 
       - run: echo "TAG=$(git log -1 --pretty=%ad --date=format:%Y%m%d-%H%M%S)" >> $GITHUB_ENV
 
