@@ -29,6 +29,13 @@ jobs:
           workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.CI_SERVICE_ACCOUNT_EMAIL }}
 
+      - uses: docker/login-action@v3
+        name: Login to Google Artifact Registry
+        with:
+          registry: europe-west1-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
       - run: echo "TAG=$(git log -1 --pretty=%ad --date=format:%Y%m%d-%H%M%S)" >> $GITHUB_ENV
 
       - uses: docker/build-push-action@v6
