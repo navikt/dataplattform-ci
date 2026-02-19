@@ -46,7 +46,7 @@ RUNNER_NAME="${RUNNER_PREFIX}-${RUNNER_ENVIRONMENT}"
 # [START cloudrun_github_worker_pool_start]
 # Configure the current runner instance with URL, token and name.
 # mkdir -p /home/runner/actions-runner && cd /home/runner/actions-runner
-./config.sh --unattended --url "https://github.com/${GITHUB_ORG}" --token "${GH_TOKEN}" --name "${RUNNER_NAME}" --labels "${RUNNER_LABELS}" --runnergroup "${RUNNER_GROUP}"
+./config.sh --unattended --url "https://github.com/${GITHUB_ORG}" --token "${GH_TOKEN}" --name "${RUNNER_NAME}" --labels "${RUNNER_LABELS}" --runnergroup "${RUNNER_GROUP}" --replace
 
 # Function to cleanup and remove runner from Github.
 cleanup() {
