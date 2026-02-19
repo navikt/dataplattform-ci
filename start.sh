@@ -23,6 +23,7 @@ GITHUB_APP_INSTALLATION_ID="${GITHUB_APP_INSTALLATION_ID:-110638335}"
 GITHUB_APP_PRIVATE_KEY_PATH="${GITHUB_APP_PRIVATE_KEY_PATH}"
 RUNNER_LABELS="${RUNNER_LABELS:-foo,bar}"
 RUNNER_GROUP="${RUNNER_GROUP:-Default}"
+RUNNER_ENVIRONMENT="${RUNNER_ENVIRONMENT:-dev}"
 
 # Validate that the private key exists
 if [ ! -f "${GITHUB_APP_PRIVATE_KEY_PATH}" ]; then
@@ -40,12 +41,7 @@ if [ -z "${GH_TOKEN}" ]; then
 fi
 
 RUNNER_PREFIX="union-ci-runner"
-RUNNER_SUFFIX=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)
-RUNNER_NAME="${RUNNER_PREFIX}-${RUNNER_SUFFIX}"
-
-echo "Runner:"
-echo "$RUNNER_SUFFIX"
-echo "$RUNNER_NAME"
+RUNNER_NAME="${RUNNER_PREFIX}-${RUNNER_ENVIRONMENT}"
 
 # [START cloudrun_github_worker_pool_start]
 # Configure the current runner instance with URL, token and name.
