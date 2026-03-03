@@ -25,6 +25,5 @@ COPY create_jwt_token.sh create_jwt_token.sh
 RUN chmod +x create_jwt_token.sh
 
 # Add start entrypoint with right permissions.
-USER runner
 ENTRYPOINT ["./start.sh"]
 # [END cloudrun_github_worker_pool_dockerfile]
