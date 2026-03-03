@@ -20,7 +20,7 @@ permissions:
   id-token: write
 
 jobs:
-  build-push-and-update-runner-image:
+  build-push-runner-image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -31,8 +31,8 @@ jobs:
         uses: google-github-actions/auth@v3
         with:
           token_format: access_token
-          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ vars.CI_SERVICE_ACCOUNT_EMAIL }}
+          workload_identity_provider: ${{ vars.PROD_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.CI_PROD_SERVICE_ACCOUNT_EMAIL }}
 
       - uses: docker/login-action@v3
         name: Login to Google Artifact Registry
@@ -49,6 +49,18 @@ jobs:
           tags: |
             europe-west1-docker.pkg.dev/nav-data-images-prod/dataplattform-infra/union-ci-runner:${{ env.TAG }}
 
+  update-dev-runner-image:
+    needs: build-push-runner-image
+    runs-on: ubuntu-latest
+    steps:
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ vars.DEV_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.CI_DEV_SERVICE_ACCOUNT_EMAIL }}
+
       - name: Update dev cloud run worker pool image
         run: |
           gcloud beta run worker-pools update ${{ env.CLOUD_RUN_WORKER_POOL_NAME }} \
@@ -56,9 +68,23 @@ jobs:
             --region=europe-west1 \
             --image=europe-west1-docker.pkg.dev/nav-data-images-prod/dataplattform-infra/union-ci-runner:${{ env.TAG }}
 
+  update-prod-runner-image:
+    needs: build-push-runner-image
+    runs-on: ubuntu-latest
+    steps:
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ vars.PROD_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.CI_PROD_SERVICE_ACCOUNT_EMAIL }}
+
       - name: Update prod cloud run worker pool image
         run: |
           gcloud beta run worker-pools update ${{ env.CLOUD_RUN_WORKER_POOL_NAME }} \
             --project=${{ env.CLOUD_RUN_PROD_PROJECT }} \
             --region=europe-west1 \
             --image=europe-west1-docker.pkg.dev/nav-data-images-prod/dataplattform-infra/union-ci-runner:${{ env.TAG }}
+
+
