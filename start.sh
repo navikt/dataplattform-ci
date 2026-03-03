@@ -12,9 +12,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
 set -e
+
+if [[ "${RUNNER_ENVIRONMENT}" == "dev" ]]; then
+  openssl s_client -showcerts -connect proxy.data.dev.knada.io:443 </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > swp.crt
+else
+  openssl s_client -showcerts -connect proxy.data.knada.io:443 </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > swp.crt
+fi
+
+sudo cp swp.crt /usr/local/share/ca-certificates
+sudo update-ca-certificates
 
 # Configuration via environment variables (with defaults for backward compatibility)
 GITHUB_ORG="${GITHUB_ORG:-navikt}"
