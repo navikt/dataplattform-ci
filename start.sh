@@ -23,6 +23,8 @@ fi
 cp swp.crt /usr/local/share/ca-certificates
 update-ca-certificates
 
+su runner
+
 # Configuration via environment variables (with defaults for backward compatibility)
 GITHUB_ORG="${GITHUB_ORG:-navikt}"
 GITHUB_APP_ID="${GITHUB_APP_ID:-2878174}"
