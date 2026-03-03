@@ -20,8 +20,8 @@ else
   openssl s_client -showcerts -connect proxy.data.knada.io:443 </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > swp.crt
 fi
 
-sudo cp swp.crt /usr/local/share/ca-certificates
-sudo update-ca-certificates
+cp swp.crt /usr/local/share/ca-certificates
+update-ca-certificates
 
 # Configuration via environment variables (with defaults for backward compatibility)
 GITHUB_ORG="${GITHUB_ORG:-navikt}"
