@@ -40,13 +40,21 @@ runs:
 
     - name: Set up uv
       uses: astral-sh/setup-uv@v5
+      with:
+        github-token: ${{ github.token }}
+      env:
+        UV_NATIVE_TLS: "true"
 
     - name: Install Python
       shell: bash
+      env:
+        UV_NATIVE_TLS: "true"
       run: uv python install ${{ inputs.python-version }}
 
     - name: Install flytekit
       shell: bash
+      env:
+        UV_NATIVE_TLS: "true"
       run: |
         if [ -n "${{ inputs.flytekit-version }}" ]; then
           uv tool install "flytekit==${{ inputs.flytekit-version }}"
