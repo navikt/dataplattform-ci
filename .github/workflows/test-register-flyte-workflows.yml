@@ -1,0 +1,20 @@
+name: Test register-flyte-workflows action
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: [self-hosted, union-dev]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: ./actions/register-flyte-workflows
+        with:
+          union-endpoint: union.data.dev.knada.io
+          flyte-client-id: 7de5c863-5228-4b40-8e55-1e643339baa1
+          flyte-client-secret: ${{ secrets.FLYTE_CLIENT_SECRET }}
+          flyte-project: flytesnacks
+          flyte-domain: development
+          working-directory: test_workflows

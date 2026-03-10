@@ -1,0 +1,59 @@
+name: Register Flyte Workflows
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: Python version to install via uv.
+        type: string
+        required: false
+        default: "3.12"
+      flytekit-version:
+        description: flytekit version to install (e.g. 1.14.0). Leave empty to install the latest.
+        type: string
+        required: false
+        default: ""
+      union-endpoint:
+        description: Endpoint of the Union/Flyte cluster (e.g. my-cluster.union.ai:443).
+        type: string
+        required: true
+      flyte-client-id:
+        description: OAuth2 client ID for authenticating with the Flyte/Union cluster.
+        type: string
+        required: true
+      flyte-project:
+        description: Flyte project to register workflows into.
+        type: string
+        required: true
+      flyte-domain:
+        description: Flyte domain to register workflows into.
+        type: string
+        required: false
+        default: development
+      working-directory:
+        description: Directory to run pyflyte register from. Defaults to the repo root.
+        type: string
+        required: false
+        default: "."
+    secrets:
+      flyte-client-secret:
+        description: OAuth2 client secret for authenticating with the Flyte/Union cluster.
+        required: true
+
+jobs:
+  register:
+    runs-on: [self-hosted, union-dev]
+    steps:
+      - name: Checkout calling repo
+        uses: actions/checkout@v4
+
+      - uses: navikt/dataplattform-ci/actions/register-flyte-workflows@main
+        with:
+          python-version: ${{ inputs.python-version }}
+          flytekit-version: ${{ inputs.flytekit-version }}
+          union-endpoint: ${{ inputs.union-endpoint }}
+          flyte-client-id: ${{ inputs.flyte-client-id }}
+          flyte-client-secret: ${{ secrets.flyte-client-secret }}
+          flyte-project: ${{ inputs.flyte-project }}
+          flyte-domain: ${{ inputs.flyte-domain }}
+          working-directory: ${{ inputs.working-directory }}
