@@ -6,9 +6,9 @@ on:
       - main
     paths:
       - '.github/workflows/build.yaml'
-      - 'Dockerfile'
-      - 'create_jwt_token.sh'
-      - 'start.sh'
+      - 'runner/Dockerfile'
+      - 'runner/create_jwt_token.sh'
+      - 'runner/start.sh'
 
 env:
   CLOUD_RUN_DEV_PROJECT: nav-data-union-ci-dev
@@ -47,6 +47,7 @@ jobs:
 
       - uses: docker/build-push-action@v6
         with:
+          context: runner
           push: true
           tags: |
             europe-west1-docker.pkg.dev/nav-data-images-prod/dataplattform-infra/union-ci-runner:${{ env.TAG }}

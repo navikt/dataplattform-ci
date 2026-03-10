@@ -17,4 +17,4 @@ jobs:
           flyte-client-secret: ${{ secrets.FLYTE_CLIENT_SECRET }}
           flyte-project: flytesnacks
           flyte-domain: development
-          working-directory: test_workflows
+          working-directory: tests/workflows
