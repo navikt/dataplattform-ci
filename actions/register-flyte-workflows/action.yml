@@ -42,6 +42,7 @@ runs:
       uses: astral-sh/setup-uv@v5
       with:
         github-token: ${{ github.token }}
+        enable-cache: false
       env:
         UV_NATIVE_TLS: "true"
 
