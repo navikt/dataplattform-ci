@@ -82,6 +82,10 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       env:
         FLYTE_CLIENT_SECRET: ${{ inputs.flyte-client-secret }}
+        GRPC_DEFAULT_SSL_ROOTS_FILE_PATH: /etc/ssl/certs/ca-certificates.crt
+        REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+        SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
+        CURL_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
       run: |
         pyflyte register . \
           --project ${{ inputs.flyte-project }} \
