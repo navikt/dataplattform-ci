@@ -8,13 +8,8 @@ on:
         type: string
         required: false
         default: "3.12"
-      flytekit-version:
-        description: flytekit version to install (e.g. 1.14.0). Leave empty to install the latest.
-        type: string
-        required: false
-        default: ""
       union-endpoint:
-        description: Endpoint of the Union/Flyte cluster (e.g. my-cluster.union.ai:443).
+        description: Endpoint of the Union/Flyte cluster.
         type: string
         required: true
       flyte-client-id:
@@ -50,7 +45,6 @@ jobs:
       - uses: navikt/dataplattform-ci/actions/register-flyte-workflows@main
         with:
           python-version: ${{ inputs.python-version }}
-          flytekit-version: ${{ inputs.flytekit-version }}
           union-endpoint: ${{ inputs.union-endpoint }}
           flyte-client-id: ${{ inputs.flyte-client-id }}
           flyte-client-secret: ${{ secrets.flyte-client-secret }}

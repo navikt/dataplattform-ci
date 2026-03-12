@@ -1,0 +1,8 @@
+[project]
+name = "uv-project"
+version = "0.1.0"
+description = "Test project for register-flyte-workflows action (uv)"
+requires-python = ">=3.12"
+dependencies = [
+    "flytekit>=1.16.15",
+]

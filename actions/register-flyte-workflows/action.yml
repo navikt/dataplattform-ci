@@ -6,10 +6,6 @@ inputs:
     description: Python version to install via uv.
     required: false
     default: "3.12"
-  flytekit-version:
-    description: flytekit version to install (e.g. 1.14.0). Leave empty to install the latest.
-    required: false
-    default: ""
   union-endpoint:
     description: Endpoint of the Union/Flyte cluster (e.g. my-cluster.union.ai:443).
     required: true
@@ -30,6 +26,10 @@ inputs:
     description: Directory to run pyflyte register from. Defaults to the repo root.
     required: false
     default: "."
+  python-index-url:
+    description: Internal platform PyPI proxy (do not override)
+    required: false
+    default: https://europe-west1-python.pkg.dev/nav-data-images-prod/pypi/simple/
 
 runs:
   using: composite
@@ -47,22 +47,41 @@ runs:
         UV_NATIVE_TLS: "true"
         NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
 
-    - name: Install Python
+    - name: Create virtual environment
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       env:
         UV_NATIVE_TLS: "true"
-      run: uv python install ${{ inputs.python-version }}
-
-    - name: Install flytekit
-      shell: bash
-      env:
-        UV_NATIVE_TLS: "true"
+        UV_DEFAULT_INDEX: ${{ inputs.python-index-url }}
+        PIP_INDEX_URL: ${{ inputs.python-index-url }}
       run: |
-        if [ -n "${{ inputs.flytekit-version }}" ]; then
-          uv tool install "flytekit==${{ inputs.flytekit-version }}"
+        uv venv .venv --python "${{ inputs.python-version }}"
+
+    - name: Install workflow dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        UV_NATIVE_TLS: "true"
+        UV_DEFAULT_INDEX: ${{ inputs.python-index-url }}
+        PIP_INDEX_URL: ${{ inputs.python-index-url }}
+      run: |
+        set -euo pipefail
+
+        if [ -f uv.lock ] || [ -f pyproject.toml ]; then
+          uv sync --python .venv/bin/python
+        elif [ -f requirements.txt ]; then
+          uv pip install --python .venv/bin/python -r requirements.txt
         else
-          uv tool install flytekit
+          echo "No dependency definition found. Expected one of: uv.lock, pyproject.toml, requirements.txt" >&2
+          exit 1
         fi
+
+    - name: Verify flytekit is installed
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set -euo pipefail
+        .venv/bin/python -c "import flytekit"
 
     - name: Write Flyte config
       shell: bash
@@ -87,6 +106,8 @@ runs:
         SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
         CURL_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
       run: |
-        pyflyte register . \
-          --project ${{ inputs.flyte-project }} \
-          --domain ${{ inputs.flyte-domain }}
+        set -euo pipefail
+
+        uv run --python .venv/bin/python pyflyte register . \
+          --project "${{ inputs.flyte-project }}" \
+          --domain "${{ inputs.flyte-domain }}"
