@@ -29,7 +29,7 @@ inputs:
   python-index-url:
     description: Internal platform PyPI proxy (do not override)
     required: false
-    default: https://europe-west1-python.pkg.dev/nav-data-images-prod/pypi/
+    default: https://europe-west1-python.pkg.dev/nav-data-images-prod/pypi/simple/
 
 runs:
   using: composite
@@ -47,13 +47,25 @@ runs:
         UV_NATIVE_TLS: "true"
         NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
 
+    - name: Get Google access token from Cloud Run service identity
+      shell: bash
+      run: |
+        TOKEN="$(curl -s -H 'Metadata-Flavor: Google' \
+          'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token' \
+          | python3 -c 'import sys, json; print(json.load(sys.stdin)["access_token"])')"
+
+        echo "::add-mask::$TOKEN"
+
+        echo "UV_INDEX_GAR_URL=${{ inputs.python-index-url }}" >> "$GITHUB_ENV"
+        echo "UV_INDEX_GAR_USERNAME=oauth2accesstoken" >> "$GITHUB_ENV"
+        echo "UV_INDEX_GAR_PASSWORD=$TOKEN" >> "$GITHUB_ENV"
+        echo "UV_DEFAULT_INDEX=gar" >> "$GITHUB_ENV"
+
     - name: Create virtual environment
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       env:
         UV_NATIVE_TLS: "true"
-        UV_DEFAULT_INDEX: ${{ inputs.python-index-url }}
-        PIP_INDEX_URL: ${{ inputs.python-index-url }}
       run: |
         uv venv .venv --python "${{ inputs.python-version }}"
 
@@ -62,8 +74,6 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       env:
         UV_NATIVE_TLS: "true"
-        UV_DEFAULT_INDEX: ${{ inputs.python-index-url }}
-        PIP_INDEX_URL: ${{ inputs.python-index-url }}
       run: |
         set -euo pipefail
 
