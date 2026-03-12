@@ -29,7 +29,7 @@ inputs:
   python-index-url:
     description: Internal platform PyPI proxy (do not override)
     required: false
-    default: https://europe-west1-python.pkg.dev/nav-data-images-prod/pypi/simple/
+    default: https://europe-west1-python.pkg.dev/nav-data-images-prod/pypi/
 
 runs:
   using: composite
