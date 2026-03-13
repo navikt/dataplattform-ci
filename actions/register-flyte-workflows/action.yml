@@ -59,7 +59,7 @@ runs:
         echo "UV_INDEX_GAR_URL=${{ inputs.python-index-url }}" >> "$GITHUB_ENV"
         echo "UV_INDEX_GAR_USERNAME=oauth2accesstoken" >> "$GITHUB_ENV"
         echo "UV_INDEX_GAR_PASSWORD=$TOKEN" >> "$GITHUB_ENV"
-        echo "UV_DEFAULT_INDEX=gar" >> "$GITHUB_ENV"
+        echo "UV_DEFAULT_INDEX=gar=${{ inputs.python-index-url }}" >> "$GITHUB_ENV"
 
     - name: Create virtual environment
       shell: bash
