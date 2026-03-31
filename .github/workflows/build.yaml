@@ -89,4 +89,3 @@ jobs:
             --project=${{ env.CLOUD_RUN_PROD_PROJECT }} \
             --region=europe-west1 \
             --image=europe-west1-docker.pkg.dev/nav-data-images-prod/dataplattform-infra/union-ci-runner:${{ needs.build-push-runner-image.outputs.tag }}
-
