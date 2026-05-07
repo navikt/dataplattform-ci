@@ -74,13 +74,14 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       env:
         UV_NATIVE_TLS: "true"
+        VIRTUAL_ENV: .venv
       run: |
         set -euo pipefail
 
         if [ -f uv.lock ] || [ -f pyproject.toml ]; then
-          uv sync --python .venv/bin/python
+          uv sync --frozen
         elif [ -f requirements.txt ]; then
-          uv pip install --python .venv/bin/python -r requirements.txt
+          uv pip install -r requirements.txt
         else
           echo "No dependency definition found. Expected one of: uv.lock, pyproject.toml, requirements.txt" >&2
           exit 1
@@ -89,9 +90,11 @@ runs:
     - name: Verify flytekit is installed
       shell: bash
       working-directory: ${{ inputs.working-directory }}
+      env:
+        VIRTUAL_ENV: .venv
       run: |
         set -euo pipefail
-        .venv/bin/python -c "import flytekit"
+        python -c "import flytekit"
 
     - name: Write Flyte config
       shell: bash
@@ -115,9 +118,10 @@ runs:
         REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
         SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
         CURL_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+        VIRTUAL_ENV: .venv
       run: |
         set -euo pipefail
 
-        uv run --python .venv/bin/python pyflyte register . \
+        pyflyte register . \
           --project "${{ inputs.flyte-project }}" \
           --domain "${{ inputs.flyte-domain }}"
