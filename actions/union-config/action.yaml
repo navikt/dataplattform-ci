@@ -1,0 +1,24 @@
+name: Union Config
+description: Apply Union configuration to the dataplane cluster.
+
+inputs:
+  manifest:
+    description: Union Team Service Accounts manifest file path, relative to the repository root.
+    required: true
+  environment:
+    description: Target environment (e.g. dev, prod).
+    required: true
+    default: prod
+
+runs:
+  using: composite
+  steps:
+    - name: Get cluster credentials 
+      shell: bash
+      run: |
+        gcloud container clusters get-credentials "${{ inputs.environment }}-union-restricted" --region europe-west1 --project "nav-data-union-restricted-${{ inputs.environment }}"
+
+    - name: Apply Union Team Service Accounts manifest
+      shell: bash
+      run: |
+        kubectl apply -f "${{ inputs.manifest }}"

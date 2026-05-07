@@ -1,0 +1,17 @@
+name: Test apply Union configuration
+
+on:
+  workflow_dispatch:
+
+jobs:
+  apply-union-config:
+    name: Apply Union configuration
+    runs-on: [self-hosted, union-dev]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - uses: ./actions/union-config
+        with:
+          manifest: union/utsa.yaml
+          environment: dev
