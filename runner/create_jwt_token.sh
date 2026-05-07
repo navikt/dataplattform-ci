@@ -36,8 +36,8 @@ signature=$(
 # Create JWT
 JWT="${header_payload}"."${signature}"
 
-echo "curling union.data.knada.io"
-curl "https://union.data.knada.io/v2" -v
+echo "curling union.data.dev.knada.io"
+curl "https://union.data.dev.knada.io/v2" -v
 
 
 access_token=$(curl --request POST \
