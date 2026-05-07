@@ -36,6 +36,10 @@ signature=$(
 # Create JWT
 JWT="${header_payload}"."${signature}"
 
+echo "curling union.data.knada.io"
+curl "https://union.data.knada.io/v2" -v
+
+
 access_token=$(curl --request POST \
   --url "https://api.github.com/app/installations/${installation_id}/access_tokens" \
   --header "Accept: application/vnd.github+json" \
