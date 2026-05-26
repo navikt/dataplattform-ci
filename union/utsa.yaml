@@ -1,4 +1,4 @@
-apiVersion: data.nav.no/v1
+apiVersion: data.nav.no/v1alpha1
 kind: UnionTeamServiceAccounts
 metadata:
   name: flytesnacks-development
