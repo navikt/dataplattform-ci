@@ -1,0 +1,26 @@
+name: Test apply Union configuration test for dataplattform-development
+
+on:
+  workflow_dispatch:
+
+jobs:
+  apply-union-config:
+    name: Apply Union configuration
+    runs-on: [self-hosted, union-dev]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ vars.DEV_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: dataplattform-utsa-manager@nav-data-union-restricted-dev.iam.gserviceaccount.com
+
+      - uses: navikt/union-config@v1
+        with:
+          manifest: union/utsa-dataplattform.yaml
+          environment: dev
+
