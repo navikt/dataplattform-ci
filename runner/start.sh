@@ -14,11 +14,7 @@
 # limitations under the License.
 set -e
 
-if [[ "${RUNNER_ENVIRONMENT}" == "dev" ]]; then
-  openssl s_client -showcerts -connect proxy.data.dev.knada.io:443 </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > swp.crt
-else
-  openssl s_client -showcerts -connect proxy.data.knada.io:443 </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > swp.crt
-fi
+openssl s_client -showcerts -connect proxy.data.nav.local:443 </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > swp.crt
 
 cp swp.crt /usr/local/share/ca-certificates
 update-ca-certificates
