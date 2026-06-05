@@ -21,10 +21,9 @@ runs:
     - name: Get cluster credentials 
       shell: bash
       run: |
-        gcloud container clusters get-credentials \
+        gcloud container fleet memberships get-credentials \
           "${{ inputs.environment }}-union-restricted" \
-          --region europe-west1 \
-          --project "nav-data-union-restricted-${{ inputs.environment }}"
+          --project "nav-data-union-control-${{ inputs.environment }}"
 
     - name: Apply Union Team Service Accounts manifest
       shell: bash
