@@ -7,6 +7,10 @@ jobs:
   apply-union-config:
     name: Apply Union configuration
     runs-on: [self-hosted, union-dev]
+    permissions:
+      contents: read
+      id-token: write
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v6
