@@ -13,6 +13,13 @@ inputs:
 runs:
   using: composite
   steps:
+    - id: auth
+      name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v3
+      with:
+        token_format: access_token
+        workload_identity_provider: ${{ inputs.environment == 'prod' && 'projects/430580391891/locations/global/workloadIdentityPools/ci-dataplattform/providers/ci-dataplattform' || 'projects/483437874962/locations/global/workloadIdentityPools/ci-dataplattform/providers/ci-dataplattform' }}
+        service_account: um-${{ github.event.repository.name }}@nav-data-union-restricted-${{ inputs.environment }}.iam.gserviceaccount.com
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v3
       with:
