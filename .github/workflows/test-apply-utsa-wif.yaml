@@ -21,7 +21,7 @@ jobs:
         with:
           token_format: access_token
           workload_identity_provider: ${{ vars.DEV_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: dataplattform-utsa-manager@nav-data-union-restricted-dev.iam.gserviceaccount.com
+          service_account: um-dataplattform-ci@nav-data-union-restricted-dev.iam.gserviceaccount.com
 
       - uses: ./actions/union-config
         with:
