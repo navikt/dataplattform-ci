@@ -1,13 +1,13 @@
 apiVersion: data.nav.no/v1alpha1
 kind: UnionTeamServiceAccounts
 metadata:
-  name: flytesnacks-development
-  namespace: flytesnacks-development
+  name: dataplattform-development
+  namespace: dataplattform-development
 spec:
-  project: flytesnacks
+  project: dataplattform
   domain: development
   serviceAccounts:
-    - name: flytesnacks-development 
+    - name: dataplattform-development 
       externalAllowlist:
         - host: github.com 
       internalAllowlist:
